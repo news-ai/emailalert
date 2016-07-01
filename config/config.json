@@ -1,0 +1,8 @@
+{
+  "mark_as_read": true,
+  "host": "imap.zoho.com",
+  "tls": true,
+  "user": "breaking@news.newsai.org",
+  "pwd": "$8At2HpTuZ3NNG+",
+  "folder": "Inbox"
+}
