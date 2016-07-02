@@ -1,8 +1,8 @@
 {
   "mark_as_read": true,
-  "host": "imap.zoho.com",
+  "host": "imap.gmail.com",
   "tls": true,
-  "user": "breaking@news.newsai.org",
-  "pwd": "$8At2HpTuZ3NNG+",
+  "user": "newsai.alerts.yc@gmail.com",
+  "pwd": "ZLATKd7)8TXY+3f",
   "folder": "Inbox"
 }
