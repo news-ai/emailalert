@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 
 	"github.com/jprobinson/eazye"
@@ -12,12 +13,12 @@ import (
 var procs = runtime.NumCPU()
 
 func FetchMail(cfg *emailalert.Config) {
-	fmt.Println("getting mail")
+	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
 	mail, err := eazye.GenerateUnread(cfg.MailboxInfo, cfg.MarkRead, false)
 	if err != nil {
-		fmt.Println("unable to get mail: ", err)
+		log.Fatal("unable to get mail: ", err)
 	}
 
 	parseMessages(mail)
@@ -26,7 +27,7 @@ func FetchMail(cfg *emailalert.Config) {
 func parseMessages(mail chan eazye.Response) {
 	for resp := range mail {
 		if resp.Err != nil {
-			fmt.Println("unable to fetch mail: %s", resp.Err)
+			log.Fatalf("unable to fetch mail: %s", resp.Err)
 			return
 		}
 		fmt.Print(resp.Email.From)
