@@ -1,5 +1,5 @@
 {
-  "mark_as_read": true,
+  "mark_as_read": false,
   "host": "imap.gmail.com",
   "tls": true,
   "user": "newsai.alerts.yc@gmail.com",

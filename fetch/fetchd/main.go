@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"log"
-	"time"
 
 	"github.com/jprobinson/go-utils/utils"
 
@@ -35,8 +34,5 @@ func main() {
 }
 
 func fetchMail(config *emailalert.Config) {
-	for {
-		fetch.FetchMail(config)
-		time.Sleep(30 * time.Second)
-	}
+	fetch.FetchMail(config)
 }
