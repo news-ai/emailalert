@@ -14,6 +14,7 @@ import (
 	"github.com/jprobinson/eazye"
 	"github.com/news-ai/emailalert"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // https://github.com/golang/go/issues/3575 :(
@@ -120,9 +121,20 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 		track := Tracking{keyword, keywordToRefs[keyword], t}
 		log.Print("mongo keyword: " + keyword)
 		c := sess.DB("emailalert").C("keywordalerts")
-		err := c.Insert(&track)
+
+		result := Tracking{}
+		err := c.Find(bson.M{"keyword": keyword, "time": t}).One(&result)
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
+		}
+		if result.Keyword == "" {
+			err = c.Insert(&track)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Print("Added Keyword " + keyword)
+		} else {
+			log.Print("Keyword " + keyword + " already exists")
 		}
 	}
 }
