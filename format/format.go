@@ -72,7 +72,11 @@ func getURLContent(href string, cKeyword *mgo.Collection) (string, string) {
 			resp, err := http.Get(href)
 			if err != nil {
 				log.Print(err)
+				return "", ""
 			}
+
+			defer resp.Body.Close()
+
 			root, err := html.Parse(resp.Body)
 			if err != nil {
 				log.Print(err)
@@ -83,6 +87,8 @@ func getURLContent(href string, cKeyword *mgo.Collection) (string, string) {
 				err = cKeyword.Insert(emailalert.Content{scrape.Text(title), href})
 				return scrape.Text(title), href
 			}
+		} else {
+			return result.Title, result.Url
 		}
 	}
 	return "", ""
