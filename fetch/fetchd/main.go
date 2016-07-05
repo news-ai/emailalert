@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"log"
+	"time"
 
 	"github.com/news-ai/emailalert"
 	"github.com/news-ai/emailalert/fetch"
 
+	"github.com/jinzhu/now"
 	"github.com/jprobinson/go-utils/utils"
 	"gopkg.in/mgo.v2"
 )
@@ -40,5 +42,8 @@ func main() {
 }
 
 func fetchMail(config *emailalert.Config, sess *mgo.Session) {
-	fetch.FetchMail(config, sess)
+	locname, offset := time.Now().Zone()
+	loc := time.FixedZone(locname, offset)
+	t := now.BeginningOfDay().In(loc)
+	fetch.FetchMail(config, sess, t)
 }

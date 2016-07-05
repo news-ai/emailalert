@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"golang.org/x/net/html"
 
-	"github.com/jinzhu/now"
 	"github.com/jprobinson/eazye"
 	"github.com/news-ai/emailalert"
 	"gopkg.in/mgo.v2"
@@ -33,19 +33,19 @@ var (
 type Tracking struct {
 	Keyword string
 	HREFs   []string
+	Time    time.Time
 }
 
-func FetchMail(cfg *emailalert.Config, sess *mgo.Session) {
+func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
-	t := now.BeginningOfDay()
 	mail, err := eazye.GenerateSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
 	if err != nil {
 		log.Fatal("unable to get mail: ", err)
 	}
 
-	parseMessages(mail, sess)
+	parseMessages(mail, sess, t)
 }
 
 func findHREFs(body []byte) []string {
@@ -89,13 +89,15 @@ loop:
 	return hrefs
 }
 
-func parseMessages(mail chan eazye.Response, sess *mgo.Session) {
+func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 	var keywords map[string]bool
 	keywords = make(map[string]bool)
 	var keywordToEmails map[string][]eazye.Email
 	keywordToEmails = make(map[string][]eazye.Email)
 	var keywordToRefs map[string][]string
 	keywordToRefs = make(map[string][]string)
+
+	// Get information from email & extract links
 	for resp := range mail {
 		if resp.Err != nil {
 			log.Fatalf("unable to fetch mail: %s", resp.Err)
@@ -107,14 +109,15 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session) {
 		keywords[keyword] = true
 		log.Print("getting keyword: " + keyword)
 
+		// Add email and HREFs to keywords
 		keywordToEmails[keyword] = append(keywordToEmails[keyword], resp.Email)
-		// HTML := string(keywordToEmails[keyword][0].HTML[:])
-		// fmt.Print(HTML)
 		refs := findHREFs(resp.Email.HTML)
 		keywordToRefs[keyword] = refs
 	}
+
+	// Add Keywords -> Links into MongoDB
 	for keyword, _ := range keywords {
-		track := Tracking{keyword, keywordToRefs[keyword]}
+		track := Tracking{keyword, keywordToRefs[keyword], t}
 		log.Print("mongo keyword: " + keyword)
 		c := sess.DB("emailalert").C("keywordalerts")
 		err := c.Insert(&track)
