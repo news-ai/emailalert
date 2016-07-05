@@ -4,10 +4,11 @@ import (
 	"flag"
 	"log"
 
-	"github.com/jprobinson/go-utils/utils"
-
 	"github.com/news-ai/emailalert"
 	"github.com/news-ai/emailalert/fetch"
+
+	"github.com/jprobinson/go-utils/utils"
+	"gopkg.in/mgo.v2"
 )
 
 const logPath = "/var/log/emailalert/fetchd.log"
@@ -29,10 +30,15 @@ func main() {
 	}
 
 	config := emailalert.NewConfig()
+	sess, err := config.MgoSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sess.Close()
 
-	fetchMail(config)
+	fetchMail(config, sess)
 }
 
-func fetchMail(config *emailalert.Config) {
-	fetch.FetchMail(config)
+func fetchMail(config *emailalert.Config, sess *mgo.Session) {
+	fetch.FetchMail(config, sess)
 }

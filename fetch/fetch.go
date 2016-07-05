@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"regexp"
@@ -14,6 +13,7 @@ import (
 	"github.com/jinzhu/now"
 	"github.com/jprobinson/eazye"
 	"github.com/news-ai/emailalert"
+	"gopkg.in/mgo.v2"
 )
 
 // https://github.com/golang/go/issues/3575 :(
@@ -30,7 +30,12 @@ var (
 	urlRegex = regexp.MustCompile(`http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+`)
 )
 
-func FetchMail(cfg *emailalert.Config) {
+type Tracking struct {
+	Keyword string
+	HREFs   []string
+}
+
+func FetchMail(cfg *emailalert.Config, sess *mgo.Session) {
 	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
@@ -40,7 +45,7 @@ func FetchMail(cfg *emailalert.Config) {
 		log.Fatal("unable to get mail: ", err)
 	}
 
-	parseMessages(mail)
+	parseMessages(mail, sess)
 }
 
 func findHREFs(body []byte) []string {
@@ -84,7 +89,7 @@ loop:
 	return hrefs
 }
 
-func parseMessages(mail chan eazye.Response) {
+func parseMessages(mail chan eazye.Response, sess *mgo.Session) {
 	var keywords map[string]bool
 	keywords = make(map[string]bool)
 	var keywordToEmails map[string][]eazye.Email
@@ -99,15 +104,22 @@ func parseMessages(mail chan eazye.Response) {
 		// Grab keyword from the email subject
 		keyword := strings.Replace(resp.Email.Subject, "Google Alert - ", "", -1)
 		keyword = strings.Replace(keyword, "\"", "", -1)
-
-		log.Print("keyword: " + keyword)
-
 		keywords[keyword] = true
+		log.Print("getting keyword: " + keyword)
+
 		keywordToEmails[keyword] = append(keywordToEmails[keyword], resp.Email)
 		// HTML := string(keywordToEmails[keyword][0].HTML[:])
 		// fmt.Print(HTML)
 		refs := findHREFs(resp.Email.HTML)
 		keywordToRefs[keyword] = refs
 	}
-	fmt.Print(keywords)
+	for keyword, _ := range keywords {
+		track := Tracking{keyword, keywordToRefs[keyword]}
+		log.Print("mongo keyword: " + keyword)
+		c := sess.DB("emailalert").C("keywordalerts")
+		err := c.Insert(&track)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }

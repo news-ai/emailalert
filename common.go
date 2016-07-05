@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/jprobinson/eazye"
+	"gopkg.in/mgo.v2"
 )
 
 const (
@@ -19,6 +20,18 @@ const (
 type Config struct {
 	MarkRead          bool `json:"mark_as_read"`
 	eazye.MailboxInfo `,inline`
+}
+
+func (c *Config) MgoSession() (*mgo.Session, error) {
+	// make conn pass it to data
+	sess, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		log.Printf("Unable to connect to emailalert db! - %s", err.Error())
+		return sess, err
+	}
+
+	sess.SetMode(mgo.Eventual, true)
+	return sess, nil
 }
 
 func NewConfig() *Config {
