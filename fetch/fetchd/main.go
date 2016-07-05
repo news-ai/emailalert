@@ -42,8 +42,6 @@ func main() {
 }
 
 func fetchMail(config *emailalert.Config, sess *mgo.Session) {
-	locname, offset := time.Now().Zone()
-	loc := time.FixedZone(locname, offset)
-	t := now.BeginningOfDay().In(loc)
+	t := emailalert.GetTime()
 	fetch.FetchMail(config, sess, t)
 }

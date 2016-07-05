@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"time"
 
+	"github.com/jinzhu/now"
 	"github.com/jprobinson/eazye"
 	"gopkg.in/mgo.v2"
 )
@@ -16,6 +18,12 @@ const (
 	FetchLog  = "/var/log/emailalert/fetchd.log"
 	AccessLog = "/var/log/emailalert/access.log"
 )
+
+type Tracking struct {
+	Keyword string
+	HREFs   []string
+	Time    time.Time
+}
 
 type Config struct {
 	MarkRead          bool `json:"mark_as_read"`
@@ -48,4 +56,11 @@ func NewConfig() *Config {
 	}
 
 	return &config
+}
+
+func GetTime() time.Time {
+	locname, offset := time.Now().Zone()
+	loc := time.FixedZone(locname, offset)
+	t := now.BeginningOfDay().In(loc)
+	return t
 }

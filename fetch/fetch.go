@@ -12,9 +12,10 @@ import (
 	"golang.org/x/net/html"
 
 	"github.com/jprobinson/eazye"
-	"github.com/news-ai/emailalert"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/news-ai/emailalert"
 )
 
 // https://github.com/golang/go/issues/3575 :(
@@ -30,12 +31,6 @@ var (
 
 	urlRegex = regexp.MustCompile(`http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+`)
 )
-
-type Tracking struct {
-	Keyword string
-	HREFs   []string
-	Time    time.Time
-}
 
 func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("getting mail")
@@ -118,11 +113,11 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 
 	// Add Keywords -> Links into MongoDB
 	for keyword, _ := range keywords {
-		track := Tracking{keyword, keywordToRefs[keyword], t}
+		track := emailalert.Tracking{keyword, keywordToRefs[keyword], t}
 		log.Print("mongo keyword: " + keyword)
 		c := sess.DB("emailalert").C("keywordalerts")
 
-		result := Tracking{}
+		result := emailalert.Tracking{}
 		err := c.Find(bson.M{"keyword": keyword, "time": t}).One(&result)
 		if err != nil {
 			log.Print(err)
