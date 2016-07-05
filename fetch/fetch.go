@@ -11,6 +11,7 @@ import (
 
 	"golang.org/x/net/html"
 
+	"github.com/jinzhu/now"
 	"github.com/jprobinson/eazye"
 	"github.com/news-ai/emailalert"
 )
@@ -33,7 +34,8 @@ func FetchMail(cfg *emailalert.Config) {
 	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
-	mail, err := eazye.GenerateAll(cfg.MailboxInfo, cfg.MarkRead, false)
+	t := now.BeginningOfDay()
+	mail, err := eazye.GenerateSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
 	if err != nil {
 		log.Fatal("unable to get mail: ", err)
 	}
@@ -83,8 +85,12 @@ loop:
 }
 
 func parseMessages(mail chan eazye.Response) {
+	var keywords map[string]bool
+	keywords = make(map[string]bool)
 	var keywordToEmails map[string][]eazye.Email
 	keywordToEmails = make(map[string][]eazye.Email)
+	var keywordToRefs map[string][]string
+	keywordToRefs = make(map[string][]string)
 	for resp := range mail {
 		if resp.Err != nil {
 			log.Fatalf("unable to fetch mail: %s", resp.Err)
@@ -93,10 +99,15 @@ func parseMessages(mail chan eazye.Response) {
 		// Grab keyword from the email subject
 		keyword := strings.Replace(resp.Email.Subject, "Google Alert - ", "", -1)
 		keyword = strings.Replace(keyword, "\"", "", -1)
+
+		log.Print("keyword: " + keyword)
+
+		keywords[keyword] = true
 		keywordToEmails[keyword] = append(keywordToEmails[keyword], resp.Email)
 		// HTML := string(keywordToEmails[keyword][0].HTML[:])
 		// fmt.Print(HTML)
 		refs := findHREFs(resp.Email.HTML)
-		fmt.Print(refs)
+		keywordToRefs[keyword] = refs
 	}
+	fmt.Print(keywords)
 }
