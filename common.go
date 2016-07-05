@@ -25,6 +25,11 @@ type Tracking struct {
 	Time    time.Time
 }
 
+type Content struct {
+	Title string
+	Url   string
+}
+
 type Config struct {
 	MarkRead          bool `json:"mark_as_read"`
 	eazye.MailboxInfo `,inline`

@@ -3,12 +3,10 @@ package main
 import (
 	"flag"
 	"log"
-	"time"
 
 	"github.com/news-ai/emailalert"
 	"github.com/news-ai/emailalert/fetch"
 
-	"github.com/jinzhu/now"
 	"github.com/jprobinson/go-utils/utils"
 	"gopkg.in/mgo.v2"
 )
