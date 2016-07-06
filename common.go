@@ -20,10 +20,19 @@ const (
 )
 
 type Content struct {
-	Title    string
-	Url      string
-	Body     string
-	Keywords []string
+	Url               string     `json:"url"`
+	Name              string     `json:"name"`
+	Created_at        string     `json:"created_at"`
+	Header_image      string     `json:"header_image"`
+	Basic_summary     string     `json:"basic_summary"`
+	Opening_paragraph string     `json:"opening_paragraph"`
+	Keywords          []string   `json:"keywords"`
+	Authors           []string   `json:"authors"`
+	Html              string     `json:"html"`
+	Text              string     `json:"text"`
+	Tags              []string   `json:"tags"`
+	Sentences         []Sentence `json:"sentences"`
+	TopSentence       string     `json:"topsentence"`
 }
 
 type Tracking struct {
