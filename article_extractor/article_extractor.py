@@ -1,71 +1,39 @@
-#!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+import string
+import re
 
-import nltk
-import simplejson as json
-import requests
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
-
-from np_extractor import NPExtractor
-
-sent_detector = None 
-np_extractor = None 
-
-PORT=1029
-
-class NPService(BaseHTTPRequestHandler):
-
-    def do_POST(self):
-        content_len = int(self.headers.getheader('content-length'))
-        raw_text = self.rfile.read(content_len)
-        raw_text = raw_text.decode("utf8")
-        np_results = self.extract(raw_text)
-
-        self.send_response(200)
-        self.send_header("Content-Type", "text/javascript; charset=UTF-8") 
-        self.end_headers()
-
-        self.wfile.write(json.dumps(np_results))
-        return
-
-    def extract(self, raw_text):
-        sentences = sent_detector.tokenize(raw_text)
-        results = dict() 
-        max_phrases = -1
-        top_sent = ""
-        sents = list() 
-        for sent in sentences:
-            result = np_extractor.extract(sent)
-
-            if len(result.keys()) > max_phrases:
-                max_phrases = len(result.keys())
-                top_sent = sent 
-
-            sents.append({'sentence':sent, 'noun_phrases': result.keys()})
-
-            for key in result.keys():
-                results[key] = result[key]
-
-            
-        return {'noun_phrases':results, 'top_sentence': top_sent, 'sentences': sents, 'count':len(results)}
+# Third-party app imports
+from urlparse import urlparse
+from newspaper import Article
 
 
-def np_extract(text):
-    r = requests.post("http://localhost:%d/" % (PORT), data=text, headers={'content-type': 'text/plain; chartset=utf-8'})
-    if r.status_code != requests.codes.ok:
-        r.raise_for_status()
+class ArticleExtractor(object):
 
-    return json.loads(r.text)
+    def __init__(self):
+        self.title = ''
 
-def main():
-    # only setup extractors if we're running the server
-    global np_extractor
-    np_extractor = NPExtractor()
-    global sent_detector
-    sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+    def url_validate(self, url):
+        url = urlparse(url)
+        return (
+            url.scheme + '://' + url.netloc +
+            url.path, url.scheme + '://' + url.netloc
+        )
 
-    server = HTTPServer(('', PORT), NPService)
-    server.serve_forever()
+    def extract(self, url):
+        article = Article(url)
+        article.download()
+        article.parse()
+        article.nlp()
 
-if __name__ == "__main__":
-    main() 
+        url, publisher = self.url_validate(url)
+
+        data = {}
+        data['url'] = url
+        data['name'] = article.title  # Get Title
+        if article.publish_date:
+            data['created_at'] = str(article.publish_date)
+        data['header_image'] = article.top_image
+        data['basic_summary'] = article.summary
+        data['opening_paragraph'] = article.opening_paragraph
+
+        return data
