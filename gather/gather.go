@@ -25,7 +25,8 @@ func GatherAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 		for _, result := range results {
 			log.Println(result.Keyword)
 			for _, href := range result.HREFs {
-				log.Println(href)
+				article := callArticleExtractor(href)
+				log.Println(article.Keywords)
 			}
 		}
 	}

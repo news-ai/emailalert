@@ -35,5 +35,7 @@ class ArticleExtractor(object):
         data['header_image'] = article.top_image
         data['basic_summary'] = article.summary
         data['opening_paragraph'] = article.opening_paragraph
+        data['keywords'] = article.keywords
+        data['authors'] = article.authors
 
         return data
