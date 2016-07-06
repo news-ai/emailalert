@@ -10,7 +10,8 @@ Looking at Google Alert emails:
 Running
 
 1. Run `article_extractor` (`nohup python service.py &`)
-2. Run `fetch`
-3. Run `gather`
-4. Run `rank`
-5. Run `format`
+2. Run `np_extractor` (`nohup python service.py &`)
+3. Run `fetch`
+4. Run `gather`
+5. Run `rank`
+6. Run `format`
