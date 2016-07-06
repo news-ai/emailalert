@@ -44,8 +44,20 @@ func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	parseMessages(mail, sess, t)
 }
 
+func formatURL(href string) string {
+	splitHref := strings.Split(href, "http://")
+	if len(splitHref) > 1 {
+		href = "http://" + splitHref[1]
+		splitHref = strings.Split(href, "&")
+		return splitHref[0]
+	}
+	return ""
+}
+
 func findHREFs(body []byte) []string {
 	var hrefs []string
+	var repeatHrefs map[string]bool
+	repeatHrefs = make(map[string]bool)
 
 	z := html.NewTokenizer(bytes.NewReader(body))
 loop:
@@ -64,7 +76,13 @@ loop:
 				for {
 					key, val, more := z.TagAttr()
 					if bytes.Equal(hrefAttr, key) && bytes.HasPrefix(val, httpPrefix) {
-						hrefs = append(hrefs, string(val))
+						href := formatURL(string(val))
+						if href != "" {
+							if _, ok := repeatHrefs[href]; !ok {
+								hrefs = append(hrefs, href)
+								repeatHrefs[href] = true
+							}
+						}
 						break
 					}
 					if !more {
@@ -79,7 +97,10 @@ loop:
 	if len(hrefs) == 0 {
 		matches := urlRegex.FindAll(body, -1)
 		for _, match := range matches {
-			hrefs = append(hrefs, string(match))
+			href := formatURL(string(match))
+			if href != "" {
+				hrefs = append(hrefs, href)
+			}
 		}
 	}
 	return hrefs
@@ -107,8 +128,7 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 
 		// Add email and HREFs to keywords
 		keywordToEmails[keyword] = append(keywordToEmails[keyword], resp.Email)
-		refs := findHREFs(resp.Email.HTML)
-		keywordToRefs[keyword] = refs
+		keywordToRefs[keyword] = findHREFs(resp.Email.HTML)
 	}
 
 	// Add Keywords -> Links into MongoDB
@@ -125,7 +145,7 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 		if result.Keyword == "" {
 			err = c.Insert(&track)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 			}
 			log.Print("Added Keyword " + keyword)
 		} else {

@@ -19,15 +19,28 @@ const (
 	AccessLog = "/var/log/emailalert/access.log"
 )
 
+type Content struct {
+	Title    string
+	Url      string
+	Body     string
+	Keywords []string
+}
+
 type Tracking struct {
 	Keyword string
 	HREFs   []string
 	Time    time.Time
 }
 
-type Content struct {
-	Title string
-	Url   string
+type Gathering struct {
+	Keyword string
+	HREFs   []Content
+	Time    time.Time
+}
+
+type Sentence struct {
+	Value   string   `json:"sentence"bson:"sentence"`
+	Phrases []string `json:"noun_phrases"bson:"noun_phrases"`
 }
 
 type Config struct {
