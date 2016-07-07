@@ -3,14 +3,10 @@ package format
 import (
 	"encoding/csv"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/yhat/scrape"
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
@@ -19,9 +15,8 @@ import (
 
 func FormatMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("formatting links")
-	var results []emailalert.Tracking
-	c := sess.DB("emailalert").C("keywordalerts")
-	cKeyword := sess.DB("emailalert").C("keywordurl")
+	var results []emailalert.Gathering
+	c := sess.DB("emailalert").C("gatheredalerts")
 
 	err := c.Find(bson.M{"time": t}).All(&results)
 	if err != nil {
@@ -36,62 +31,26 @@ func FormatMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 		var titleRepeated map[string]bool
 		titleRepeated = make(map[string]bool)
 		for _, result := range results {
-			// Checks to see if title has already been added to CSV
-			for _, href := range result.HREFs {
-				title, url := getURLContent(href, cKeyword)
-				if _, ok := titleRepeated[title]; !ok {
-					log.Print(title)
+			// Checks to see if content.Name has already been added to CSV
+			for _, content := range result.HREFs {
+				if _, ok := titleRepeated[content.Name]; !ok {
+					log.Print(content.Name)
 					var columnData []string
-					columnData = make([]string, 3)
+					columnData = make([]string, 6)
 					columnData[0] = result.Keyword
-					columnData[1] = title
-					columnData[2] = url
+					columnData[1] = content.Name
+					columnData[2] = content.Url
+					columnData[3] = content.Basic_summary
+					columnData[4] = strings.Join(content.Keywords, ", ")
+					columnData[5] = strings.Join(content.Tags, ", ")
 					csvData = append(csvData, columnData)
-					titleRepeated[title] = true
+					titleRepeated[content.Name] = true
 				}
 			}
 		}
 	}
 
 	writeCSV(csvData)
-}
-
-func getURLContent(href string, cKeyword *mgo.Collection) (string, string) {
-	splitHref := strings.Split(href, "http://")
-	if len(splitHref) > 1 {
-		href = "http://" + splitHref[1]
-		splitHref = strings.Split(href, "&")
-		href = splitHref[0]
-
-		result := emailalert.Content{}
-		err := cKeyword.Find(bson.M{"url": href}).One(&result)
-		if err != nil {
-			log.Print(err)
-		}
-		if result.Url == "" {
-			resp, err := http.Get(href)
-			if err != nil {
-				log.Print(err)
-				return "", ""
-			}
-
-			defer resp.Body.Close()
-
-			root, err := html.Parse(resp.Body)
-			if err != nil {
-				log.Print(err)
-			}
-
-			title, ok := scrape.Find(root, scrape.ByTag(atom.Title))
-			if ok {
-				err = cKeyword.Insert(emailalert.Content{scrape.Text(title), href})
-				return scrape.Text(title), href
-			}
-		} else {
-			return result.Title, result.Url
-		}
-	}
-	return "", ""
 }
 
 func writeCSV(csvData [][]string) {
