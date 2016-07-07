@@ -12,12 +12,12 @@ import (
 
 func RankAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("ranking links: " + t.String())
-	var results []emailalert.Tracking
+	var results []emailalert.Gathering
 	alertSession := sess.DB("emailalert")
-	alertsCollection := alertSession.C("keywordalerts")
+	gatheredCollection := alertSession.C("gatheredalerts")
 	// rankedCollection := alertSession.C("rankalerts")
 
-	err := alertsCollection.Find(bson.M{"time": t}).All(&results)
+	err := gatheredCollection.Find(bson.M{"time": t}).All(&results)
 	if err != nil {
 		log.Println(err)
 	}
@@ -25,7 +25,7 @@ func RankAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 		for _, result := range results {
 			log.Println(result.Keyword)
 			for _, href := range result.HREFs {
-				log.Println(href)
+				log.Print(href.Name + " " + href.Url)
 			}
 		}
 	}

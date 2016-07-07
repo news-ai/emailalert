@@ -16,6 +16,7 @@ func callArticleExtractor(url string) emailalert.Content {
 	resp, err := http.Post("http://127.0.0.1:1030/", "application/json", bytes.NewReader([]byte(url)))
 	if err != nil {
 		log.Print("unable to hit article_extractor: ", err)
+		log.Print("url: ", url)
 		return articleR
 	}
 	defer resp.Body.Close()

@@ -44,12 +44,27 @@ func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	parseMessages(mail, sess, t)
 }
 
+func deleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 func formatURL(href string) string {
-	splitHref := strings.Split(href, "http://")
+	splitCharacter := "http://"
+	if strings.Count(href, "https://") > 1 {
+		splitCharacter = "https://"
+	}
+	splitHref := strings.Split(href, splitCharacter)
+	splitHref = deleteEmpty(splitHref)
 	if len(splitHref) > 1 {
-		href = "http://" + splitHref[1]
-		splitHref = strings.Split(href, "&")
-		return splitHref[0]
+		href = splitCharacter + splitHref[1]
+		splitAmpersandHref := strings.Split(href, "&")
+		return splitAmpersandHref[0]
 	}
 	return ""
 }
