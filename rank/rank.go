@@ -15,7 +15,7 @@ func RankAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	var results []emailalert.Gathering
 	alertSession := sess.DB("emailalert")
 	gatheredCollection := alertSession.C("gatheredalerts")
-	// rankedCollection := alertSession.C("rankalerts")
+	rankedCollection := alertSession.C("rankalerts")
 
 	err := gatheredCollection.Find(bson.M{"time": t}).All(&results)
 	if err != nil {

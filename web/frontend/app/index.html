@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+</head>
+
+<body>
+<section id="alerts">
+    
+</section>
+</body>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+    $.getJSON("http://localhost:8080/v1/get_all_articles")
+        .done(function(data) {
+            for (var keyword in data) {
+                var key = data[keyword].Keyword;
+                var hrefs = data[keyword].HREFs;
+                $('#alerts').append('<h1>' + key + ' (' + data[keyword].Id + ')</h1> ');
+                for (var href in hrefs) {
+                    var article = hrefs[href];
+                    if (article.name) {
+                        $('#alerts').append('<h3><a href="' + article.url + '">' + article.name + '</a></h3>');
+                        $('#alerts').append('<p><b>Top sentence:</b> ' + article.topsentence + '</p>');
+                        $('#alerts').append('<p><b>Opening paragraph:</b> ' + article.opening_paragraph + '</p>');
+                        $('#alerts').append('<p><b>Authors:</b> ' + article.authors + '</p>');
+                        $('#alerts').append('<p><b>Keywords:</b> ' + article.keywords.join(', ') + '</p>');
+                        $('#alerts').append('<p><b>Tags:</b> ' + article.tags.join(', ') + '</p>');
+                    }
+                }
+            }
+        });
+</script>
+
+</html>

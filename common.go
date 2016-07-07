@@ -9,14 +9,16 @@ import (
 	"github.com/jinzhu/now"
 	"github.com/jprobinson/eazye"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const (
 	configFile = "/opt/emailalert/etc/config.json"
 
 	ServerLog = "/var/log/emailalert/server.log"
-	FetchLog  = "/var/log/emailalert/fetchd.log"
 	AccessLog = "/var/log/emailalert/access.log"
+
+	WebDir = "/opt/newshound/www"
 )
 
 type Content struct {
@@ -28,11 +30,12 @@ type Content struct {
 	Opening_paragraph string     `json:"opening_paragraph"`
 	Keywords          []string   `json:"keywords"`
 	Authors           []string   `json:"authors"`
-	Html              string     `json:"html"`
+	Html              string     `json:"-"`
 	Text              string     `json:"text"`
 	Tags              []string   `json:"tags"`
 	Sentences         []Sentence `json:"sentences"`
 	TopSentence       string     `json:"topsentence"`
+	Status            bool       `json:"-"`
 }
 
 type Tracking struct {
@@ -42,6 +45,7 @@ type Tracking struct {
 }
 
 type Gathering struct {
+	Id      bson.ObjectId "_id,omitempty"
 	Keyword string
 	HREFs   []Content
 	Time    time.Time

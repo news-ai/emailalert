@@ -16,7 +16,7 @@ import (
 func FormatMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("formatting links")
 	var results []emailalert.Gathering
-	c := sess.DB("emailalert").C("gatheredalerts")
+	c := sess.DB("emailalert").C("rankalerts")
 
 	err := c.Find(bson.M{"time": t}).All(&results)
 	if err != nil {
