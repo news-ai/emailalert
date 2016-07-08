@@ -22,9 +22,10 @@
                 $('#alerts').append('<h1>' + key + ' (' + data[keyword].Id + ')</h1> ');
                 for (var href in hrefs) {
                     var article = hrefs[href];
-                    console.log(article.status);
                     if (article.name && !article.status) {
-                        $('#alerts').append('<h3><a href="' + article.url + '">' + article.name + '</a></h3> <a target="cheese" href="' + 'http://localhost:8080/v1/article_status/' + data[keyword].Id + '?url=' + article.url +'">Remove</a>');
+                        var g = data[keyword].Id;
+                        var f = article.url;
+                        $('#alerts').append('<h3><a href="' + article.url + '">' + article.name + '</a></h3>');
                         $('#alerts').append('<p><b>Top sentence:</b> ' + article.topsentence + '</p>');
                         $('#alerts').append('<p><b>Opening paragraph:</b> ' + article.opening_paragraph + '</p>');
                         $('#alerts').append('<p><b>Authors:</b> ' + article.authors + '</p>');
@@ -34,6 +35,9 @@
                 }
             }
         });
+    function go(argument) {
+        console.log(argument);
+    }
 </script>
 
 </html>
