@@ -22,8 +22,9 @@
                 $('#alerts').append('<h1>' + key + ' (' + data[keyword].Id + ')</h1> ');
                 for (var href in hrefs) {
                     var article = hrefs[href];
-                    if (article.name) {
-                        $('#alerts').append('<h3><a href="' + article.url + '">' + article.name + '</a></h3>');
+                    console.log(article.status);
+                    if (article.name && !article.status) {
+                        $('#alerts').append('<h3><a href="' + article.url + '">' + article.name + '</a></h3> <a target="cheese" href="' + 'http://localhost:8080/v1/article_status/' + data[keyword].Id + '?url=' + article.url +'">Remove</a>');
                         $('#alerts').append('<p><b>Top sentence:</b> ' + article.topsentence + '</p>');
                         $('#alerts').append('<p><b>Opening paragraph:</b> ' + article.opening_paragraph + '</p>');
                         $('#alerts').append('<p><b>Authors:</b> ' + article.authors + '</p>');
