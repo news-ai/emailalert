@@ -1,4 +1,4 @@
-# email-google-alerts
+# Email Alerts
 
 Looking at Google Alert emails:
 
