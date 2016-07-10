@@ -30,6 +30,7 @@ func SetAlertStatus(db *mgo.Database, alert_id string, url string) (emailalert.G
 		fmt.Println(href.Url)
 		if href.Url == url {
 			fmt.Println(href.Status)
+			alert.HREFs[i].IsApproved = !alert.HREFs[i].IsApproved
 			alert.HREFs[i].Status = !alert.HREFs[i].Status
 		}
 	}

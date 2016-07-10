@@ -19,8 +19,9 @@
         <table ng-if="articlesApproved.length > 1">
             <div ng-repeat="article in articlesApproved">
                 <b>{{article.Company}}</b>
-                <p>Article Name: {{article.name}}</p>
+                <p><b>Article Name: </b><a target="_blank" href="{{article.url}}">{{article.name}}</a></p>
                 <p><b>Number of positive, neutral, negative</b>: {{article.numpositive}}, {{article.numneutral}}, {{article.numnegative}}</p>
+                <p><a href="#" ng-click="removeArticle(article.CompanyId,article.url)">Remove</a>, <a href="#" ng-click="approveArticle(article.CompanyId,article.url, 'positive')">Positive</a>, <a href="#" ng-click="approveArticle(article.CompanyId,article.url, 'neutral')">Neutral</a>, <a href="#" ng-click="approveArticle(article.CompanyId,article.url, 'negative')">Negative</a></p>
             </div>
         </table>
     </div>
