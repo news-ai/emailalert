@@ -25,7 +25,9 @@ func SetAlertStatus(db *mgo.Database, alert_id string, url string) (emailalert.G
 	if err := c.FindId(bson.ObjectIdHex(alert_id)).One(&alert); err != nil {
 		return alert, err
 	}
+	fmt.Println("url: " + url)
 	for i, href := range alert.HREFs {
+		fmt.Println(href.Url)
 		if href.Url == url {
 			fmt.Println(href.Status)
 			alert.HREFs[i].Status = !alert.HREFs[i].Status
