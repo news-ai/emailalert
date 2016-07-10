@@ -42,6 +42,29 @@ func SetAlertStatus(db *mgo.Database, alert_id string, url string) (emailalert.G
 	return alert, nil
 }
 
+func SetAlertApprove(db *mgo.Database, alert_id string, url string) (emailalert.Gathering, error) {
+	c := getNA(db)
+	var alert emailalert.Gathering
+	if err := c.FindId(bson.ObjectIdHex(alert_id)).One(&alert); err != nil {
+		return alert, err
+	}
+	fmt.Println("url: " + url)
+	for i, href := range alert.HREFs {
+		fmt.Println(href.Url)
+		if href.Url == url {
+			fmt.Println(href.IsApproved)
+			alert.HREFs[i].IsApproved = !alert.HREFs[i].IsApproved
+		}
+	}
+
+	err := c.Update(bson.M{"_id": bson.ObjectIdHex(alert_id)}, bson.M{"$set": bson.M{"hrefs": alert.HREFs}})
+	if err != nil {
+		fmt.Printf("update fail %v\n", err)
+	}
+
+	return alert, nil
+}
+
 func getNA(db *mgo.Database) *mgo.Collection {
 	return db.C("gatheredalerts")
 }

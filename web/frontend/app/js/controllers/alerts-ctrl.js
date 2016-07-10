@@ -10,7 +10,7 @@ angular
                 for (var company in data) {
                     if (company && data[company]) {
                         for (var article in data[company].HREFs) {
-                            if (data[company].HREFs[article] && !data[company].HREFs[article].status) {
+                            if (data[company].HREFs[article] && !data[company].HREFs[article].status && !data[company].HREFs[article].approved) {
                                 data[company].HREFs[article].Company = data[company].Keyword;
                                 data[company].HREFs[article].CompanyId = data[company].Id;
                                 articles.push(data[company].HREFs[article]);
@@ -27,6 +27,15 @@ angular
             Restangular.one('article_status/' + id + '?url=' + window.encodeURIComponent(url)).get().then(function(response){
                 $scope.articles.pop();
                 $scope.currentArticle = $scope.articles[0];
+                window.location.reload()
+            });
+        }
+
+        $scope.approveArticle = function (id, url) {
+            Restangular.one('article_approve/' + id + '?url=' + window.encodeURIComponent(url)).get().then(function(response){
+                $scope.articles.pop();
+                $scope.currentArticle = $scope.articles[0];
+                window.location.reload()
             });
         }
     });

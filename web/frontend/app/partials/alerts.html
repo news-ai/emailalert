@@ -4,7 +4,7 @@
             <table>
                 <td id="{{currentArticle.CompanyId}}">
                     <b>{{currentArticle.Company}}</b><br>
-                    <p><a href="#" ng-click="removeArticle(currentArticle.CompanyId,currentArticle.url)">Remove</a></p>
+                    <p><a href="#" ng-click="removeArticle(currentArticle.CompanyId,currentArticle.url)">Remove</a>, <a href="#" ng-click="approveArticle(currentArticle.CompanyId,currentArticle.url)">Approve</a></p>
                     <p><b>Article Name: </b><a target="_blank" href="{{currentArticle.url}}">{{currentArticle.name}}</a></p>
                     <p><b>Top Sentence</b>: {{currentArticle.topsentence}}</p>
                     <p><b>Summary</b>: {{currentArticle.basic_summary}}</p>
@@ -14,4 +14,4 @@
             </table>
         </section>
     </div>
-</div>
+</div

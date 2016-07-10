@@ -36,6 +36,9 @@ func GatherAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 				if err != nil {
 					log.Println(err)
 				}
+				if article.Url == "" {
+					article.Url = href
+				}
 				singleKeyword.HREFs = append(singleKeyword.HREFs, article)
 			}
 			result := emailalert.Gathering{}

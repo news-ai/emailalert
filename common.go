@@ -36,6 +36,7 @@ type Content struct {
 	Sentences         []Sentence `json:"sentences"`
 	TopSentence       string     `json:"topsentence"`
 	Status            bool       `json:"status"`
+	IsApproved        bool       `json:"approved"`
 }
 
 type Tracking struct {
