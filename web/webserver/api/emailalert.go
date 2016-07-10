@@ -41,7 +41,7 @@ func (n EmailAlertAPI) Handle(subRouter *mux.Router) {
 	// ALERTS
 	subRouter.HandleFunc("/get_all_articles", n.findAlerts).Methods("GET")
 	subRouter.HandleFunc("/article_status/{alert_id}", n.setAlertStatus).Methods("GET")
-	subRouter.HandleFunc("/article_approve/{alert_id}", n.setAlertApprove).Methods("GET")
+	subRouter.HandleFunc("/article_approve/{alert_id}/{sentiment}", n.setAlertApprove).Methods("GET")
 }
 
 func (n EmailAlertAPI) findAlerts(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +84,7 @@ func (n EmailAlertAPI) setAlertApprove(w http.ResponseWriter, r *http.Request) {
 	s, db := n.getDB()
 	defer s.Close()
 
-	alerts, err := SetAlertApprove(db, vars["alert_id"], string(r.URL.Query().Get("url")))
+	alerts, err := SetAlertApprove(db, vars["alert_id"], string(r.URL.Query().Get("url")), vars["sentiment"])
 	if err != nil {
 		log.Printf("Unable to access alerts! - %s", err.Error())
 		web.ErrorResponse(w, ErrDB, http.StatusBadRequest)

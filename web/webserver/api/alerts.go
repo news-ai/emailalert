@@ -42,7 +42,7 @@ func SetAlertStatus(db *mgo.Database, alert_id string, url string) (emailalert.G
 	return alert, nil
 }
 
-func SetAlertApprove(db *mgo.Database, alert_id string, url string) (emailalert.Gathering, error) {
+func SetAlertApprove(db *mgo.Database, alert_id string, url string, sentiment string) (emailalert.Gathering, error) {
 	c := getNA(db)
 	var alert emailalert.Gathering
 	if err := c.FindId(bson.ObjectIdHex(alert_id)).One(&alert); err != nil {
@@ -54,6 +54,13 @@ func SetAlertApprove(db *mgo.Database, alert_id string, url string) (emailalert.
 		if href.Url == url {
 			fmt.Println(href.IsApproved)
 			alert.HREFs[i].IsApproved = !alert.HREFs[i].IsApproved
+			if sentiment == "positive" {
+				alert.HREFs[i].NumPositive += 1
+			} else if sentiment == "negative" {
+				alert.HREFs[i].NumNegative += 1
+			} else {
+				alert.HREFs[i].NumNeutral += 1
+			}
 		}
 	}
 
