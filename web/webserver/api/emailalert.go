@@ -84,10 +84,7 @@ func setCommonHeaders(w http.ResponseWriter, r *http.Request, contentType string
 	if len(origin) == 0 {
 		origin = "*"
 	}
-	w.Header().Set("Access-Control-Allow-Origin", origin)
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, *")
-	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if len(contentType) == 0 {
 		w.Header().Set("Content-Type", web.JsonContentType)
 	} else {

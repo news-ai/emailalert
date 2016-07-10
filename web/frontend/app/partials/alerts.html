@@ -1,0 +1,18 @@
+<div cg-busy="{promise: loadingPromise, templateUrl: 'partials/loadingtemplate.html'}">
+    <div ng-if="articles">
+        <section id="articles">
+            <table ng-if="articles.length > 1">
+                <tr ng-repeat="article in articles">
+                    <td>
+                        <b>{{article.Company}}</b><br>
+                        <a href="{{article.url}}">{{article.name}}</a><br>
+                        <p><b>Top Sentence</b>: {{article.topsentence}}</p>
+                        <p><b>Summary</b>: {{article.basic_summary}}</p>
+                        <p><b>Opening paragraph</b>: {{article.opening_paragraph}}</p>
+                        <p><b>Keywords</b>: {{article.keywords.join(', ')}}</p>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </div>
+</div>
