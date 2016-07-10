@@ -17,12 +17,11 @@
     </div>
     <div ng-if="!currentArticle">
         <table ng-if="articlesApproved.length > 1">
-            <tr ng-repeat="article in articlesApproved">
-                <th style="padding-right: 10px;">{{article}}</th>
-                <td>
-                    
-                </td>
-            </tr>
+            <div ng-repeat="article in articlesApproved">
+                <b>{{article.Company}}</b>
+                <p>Article Name: {{article.name}}</p>
+                <p><b>Number of positive, neutral, negative</b>: {{article.numpositive}}, {{article.numneutral}}, {{article.numnegative}}</p>
+            </div>
         </table>
     </div>
 </div

@@ -11,16 +11,19 @@ angular
                 for (var company in data) {
                     if (company && data[company]) {
                         for (var article in data[company].HREFs) {
-                            console.log(data[company].HREFs[article])
-                            if (data[company].HREFs[article] && data[company].HREFs[article].approved) {
-                                articlesApproved.push(data[company].HREFs[article]);
-                            }
-                            if (data[company].HREFs[article] && !data[company].HREFs[article].status && !data[company].HREFs[article].approved) {
+                            console.log(data[company].HREFs[article]);
+                            if (data[company].HREFs[article]) {
                                 data[company].HREFs[article].Company = data[company].Keyword;
                                 data[company].HREFs[article].CompanyId = data[company].Id;
-                                articles.push(data[company].HREFs[article]);
-                            } else {
-                                console.log(data[company].HREFs[article]);
+                                if (data[company].HREFs[article].approved) {
+                                    articlesApproved.push(data[company].HREFs[article]);
+                                }
+                                if (!data[company].HREFs[article].status && !data[company].HREFs[article].approved) {
+                                    data[company].HREFs[article].CompanyId = data[company].Id;
+                                    articlesLeft.push(data[company].HREFs[article]);
+                                } else {
+                                    console.log(data[company].HREFs[article]);
+                                }
                             }
                         }
                     }

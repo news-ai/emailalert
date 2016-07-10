@@ -17,6 +17,9 @@ func GatherAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	alertsCollection := alertSession.C("keywordalerts")
 	gatheredCollection := alertSession.C("gatheredalerts")
 
+	// Remove all gathered information from that day
+	gatheredCollection.RemoveAll(bson.M{"time": t})
+
 	err := alertsCollection.Find(bson.M{"time": t}).All(&results)
 	if err != nil {
 		log.Println(err)

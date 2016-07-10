@@ -21,7 +21,6 @@ type npResp struct {
 }
 
 func callNP(body []byte) (tags []string, sentences []emailalert.Sentence, topSentence string, err error) {
-
 	var resp *http.Response
 	resp, err = http.Post("http://127.0.0.1:1029/", "application/json", bytes.NewReader(body))
 	if err != nil {
