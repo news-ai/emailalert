@@ -38,6 +38,7 @@ func GatherAlerts(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 				}
 				if article.Url == "" {
 					article.Url = href
+					article.Name = "Information missing"
 				}
 				singleKeyword.HREFs = append(singleKeyword.HREFs, article)
 			}

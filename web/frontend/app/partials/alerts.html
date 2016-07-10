@@ -2,6 +2,7 @@
     <div ng-if="currentArticle">
         <section id="currentArticle">
             <table>
+                <p>{{articles.length}} left</p>
                 <td id="{{currentArticle.CompanyId}}">
                     <b>{{currentArticle.Company}}</b><br>
                     <p><a href="#" ng-click="removeArticle(currentArticle.CompanyId,currentArticle.url)">Remove</a>, <a href="#" ng-click="approveArticle(currentArticle.CompanyId,currentArticle.url)">Approve</a></p>
@@ -13,5 +14,8 @@
                 </td>
             </table>
         </section>
+    </div>
+    <div ng-if="!currentArticle">
+        <p>No more</p>
     </div>
 </div
