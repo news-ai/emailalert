@@ -36,7 +36,7 @@ func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
-	mail, err := eazye.GenerateUnreadSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
+	mail, err := eazye.GenerateSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
 	if err != nil {
 		log.Fatal("unable to get mail: ", err)
 	}
@@ -143,7 +143,8 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 
 		// Add email and HREFs to keywords
 		keywordToEmails[keyword] = append(keywordToEmails[keyword], resp.Email)
-		keywordToRefs[keyword] = findHREFs(resp.Email.HTML)
+		keywordHREFs := findHREFs(resp.Email.HTML)
+		keywordToRefs[keyword] = append(keywordToRefs[keyword], keywordHREFs...)
 	}
 
 	log.Println(t)

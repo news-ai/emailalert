@@ -1,4 +1,5 @@
 {
+  "client": "Y Combinator"
   "mark_as_read": false,
   "host": "imap.gmail.com",
   "tls": true,
