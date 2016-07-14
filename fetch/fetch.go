@@ -146,6 +146,7 @@ func parseMessages(mail chan eazye.Response, sess *mgo.Session, t time.Time) {
 		keywordToRefs[keyword] = findHREFs(resp.Email.HTML)
 	}
 
+	log.Println(t)
 	// Add Keywords -> Links into MongoDB
 	for keyword, _ := range keywords {
 		track := emailalert.Tracking{keyword, keywordToRefs[keyword], t}
