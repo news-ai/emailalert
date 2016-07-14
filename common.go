@@ -42,6 +42,12 @@ type Content struct {
 	NumNeutral        int        `json:"numneutral"`
 }
 
+type HREFKeyword struct {
+	Keyword string `json:"keyword"`
+	Url     string `json:"url"`
+	Hidden  bool   `json:"hidden"`
+}
+
 type Tracking struct {
 	Keyword string
 	HREFs   []string

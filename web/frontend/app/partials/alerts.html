@@ -6,13 +6,14 @@
                 <td id="{{currentArticle.CompanyId}}">
                     <b>{{currentArticle.Company}}</b><br>
                     <p><a href="#" ng-click="removeArticle(currentArticle.CompanyId,currentArticle.url)">Remove</a>, <a href="#" ng-click="approveArticle(currentArticle.CompanyId,currentArticle.url, 'positive')">Positive</a>, <a href="#" ng-click="approveArticle(currentArticle.CompanyId,currentArticle.url, 'neutral')">Neutral</a>, <a href="#" ng-click="approveArticle(currentArticle.CompanyId,currentArticle.url, 'negative')">Negative</a></p>
+                    <p>Hide this website for this keyword</p>
                     <p><b>Article URL</b>: {{currentArticle.url}}</p>
                     <p><b>Article Name</b>: <a target="_blank" href="{{currentArticle.url}}">{{currentArticle.name}}</a></p>
                     <p><b>Top Sentence</b>: {{currentArticle.topsentence}}</p>
                     <p><b>Summary</b>: {{currentArticle.basic_summary}}</p>
                     <p><b>Opening paragraph</b>: {{currentArticle.opening_paragraph}}</p>
                     <p><b>Keywords</b>: {{currentArticle.keywords.join(', ')}}</p>
-                    <p><b>Text</b>: {{currentArticle.Text}}</p>
+                    <p><b>Text</b>: {{currentArticle.text}}</p>
                 </td>
             </table>
         </section>
