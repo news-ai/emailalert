@@ -19,7 +19,7 @@
     </div>
     <div ng-if="!currentArticle">
         <table ng-if="articlesApproved.length > 1">
-            <div ng-repeat="article in articlesApproved">
+            <div ng-repeat="article in articlesApproved" ng-if="article.numpositive > 0 || article.numnegative >0 || article.numneutral > 0">
                 <b>{{article.Company}}</b>
                 <p><b>Article Name: </b><a target="_blank" href="{{article.url}}">{{article.name}}</a></p>
                 <p><b>Number of positive, neutral, negative</b>: {{article.numpositive}}, {{article.numneutral}}, {{article.numnegative}}</p>
