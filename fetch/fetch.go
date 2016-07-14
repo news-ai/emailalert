@@ -11,7 +11,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/jprobinson/eazye"
+	"github.com/news-ai/eazye"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
@@ -36,7 +36,7 @@ func FetchMail(cfg *emailalert.Config, sess *mgo.Session, t time.Time) {
 	log.Print("getting mail")
 
 	// give it 1000 buffer so we can load whatever IMAP throws at us in memory
-	mail, err := eazye.GenerateSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
+	mail, err := eazye.GenerateUnreadSince(cfg.MailboxInfo, t, cfg.MarkRead, false)
 	if err != nil {
 		log.Fatal("unable to get mail: ", err)
 	}
