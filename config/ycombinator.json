@@ -4,5 +4,9 @@
   "tls": true,
   "user": "newsai.alerts.yc@gmail.com",
   "pwd": "ZLATKd7)8TXY+3f",
-  "folder": "Inbox"
+  "folder": "Inbox",
+  "times": [
+    "2016-07-14T11:00:00Z",
+    "2016-07-14T16:00:00Z",
+  ]
 }
