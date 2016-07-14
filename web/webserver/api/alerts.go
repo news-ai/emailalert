@@ -30,8 +30,8 @@ func SetAlertStatus(db *mgo.Database, alert_id string, url string) (emailalert.G
 		fmt.Println(href.Url)
 		if href.Url == url {
 			fmt.Println(href.Status)
-			alert.HREFs[i].IsApproved = !alert.HREFs[i].IsApproved
-			alert.HREFs[i].Status = !alert.HREFs[i].Status
+			alert.HREFs[i].IsApproved = false
+			alert.HREFs[i].Status = true
 		}
 	}
 
@@ -54,7 +54,8 @@ func SetAlertApprove(db *mgo.Database, alert_id string, url string, sentiment st
 		fmt.Println(href.Url)
 		if href.Url == url {
 			fmt.Println(href.IsApproved)
-			alert.HREFs[i].IsApproved = !alert.HREFs[i].IsApproved
+			alert.HREFs[i].Status = true
+			alert.HREFs[i].IsApproved = true
 			if sentiment == "positive" {
 				alert.HREFs[i].NumPositive += 1
 			} else if sentiment == "negative" {
